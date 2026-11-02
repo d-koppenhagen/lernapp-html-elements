@@ -5,9 +5,10 @@ description: Use for any content work in this app - researching, writing, extend
 
 # Content guide of this app
 
-This app is an English-language quiz about HTML elements: what each one does, when to use it and when
-not, its effect on accessibility (implicit ARIA role), and its status (Baseline widely / newly / limited,
-experimental, deprecated). The only data file is `src/quiz.json` (schema `quiz.v1`,
+This app is a German-and-English quiz about HTML elements (`languages: ["de","en"]`, German first): what each one
+does, when to use it and when not, its effect on accessibility (implicit ARIA role), and its status (Baseline widely
+/ newly / limited, experimental, deprecated). Every learner text is a `{ de, en }` map; the build serves German at
+`/` and English at `/en/`. The only data file is `src/quiz.json` (schema `quiz.v1`,
 `node_modules/@lernapps/app-templates/runtime/quiz/quiz.v1.schema.json`); no images are used in v1. Status
 facts are baked in at authoring time, not fetched at runtime.
 
@@ -86,7 +87,9 @@ its id, a new question gets a new id, a removed id is never reused.
 
 ## Terminology
 
-- English throughout (app content). The creator-facing plan and this guide may mix German and English.
+- German and English (app content): every learner text is a `{ de, en }` map (German required by the platform rule
+  `learner-text-german`, English alongside it). Code tokens and element names (`<main>`, `role="button"`,
+  `scope="col"`) stay identical in both languages. The creator-facing plan and this guide may mix German and English.
 - Element names are written with angle brackets in prose where it reads naturally, e.g. "the `<main>` element", and
   without in option text where brevity helps, e.g. "`<main>`".
 - Terms used: element, semantic, landmark, document outline, implicit ARIA role, accessible name, Baseline (widely /

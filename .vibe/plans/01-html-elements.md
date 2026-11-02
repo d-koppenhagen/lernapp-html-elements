@@ -8,7 +8,7 @@ phase: commit
 # prePushFailures: written by the pre-push hook. Never change it.
 prePushFailures: 0
 # failedChecks: failed rules and runs, written by lernapps check and the hooks. Never change it.
-failedChecks: { checks-pass: 2 }
+failedChecks: { checks-pass: 3 }
 ---
 
 # Plan: HTML Elements – know what, when and why, first version
@@ -53,9 +53,14 @@ feedback on every option. The emphasis is on the elements learners most often ge
 - Emphasis "frequently misused > breadth > rare/new" is achieved only by the number of questions per topic cluster.
   The quiz schema has no weight/difficulty/group field; grouping is contiguous ordering in the `questions` array.
   (reason for open point 3)
-- v1 is English-only. The quiz runtime is natively bilingual but requires German first (`languages: ["de","en"]`,
-  German slot filled); an English-only bank uses plain strings without `languages`. DE+EN is a later increment, built
-  on the native map-per-language mechanism — no custom i18n in v1. (reason for open point 2)
+- Languages: German **and** English (`languages: ["de","en"]`, German first). Every learner text — title, intro,
+  sources, all 215 question texts, all option texts and their `info`, explanations and link titles — is a
+  `{ de, en }` map; link URLs stay single strings (English MDN, which resolve). This reverses the original
+  "v1 English-only" decision: the lernapps platform rule `learner-text-german` requires learner-facing text to be
+  German (English is allowed only in addition), which the platform guidance did not surface at planning time
+  (lernapps/tooling#246). The creator approved doing the DE+EN build now rather than as a later increment, after the
+  listing review raised the finding. The quiz runtime is natively bilingual (map-per-language), so no custom i18n is
+  used; the build serves German at `/` and English at `/en/`. (reason for open point 2)
 - No self-assessment: the self-assessment is an explainer-only component. This app is a `quiz`; the quiz archetype
   has none and its pipeline validates only `src/quiz.json` + images (`quiz-only-data`). The Commit task for the
   self-assessment is therefore not applicable.
@@ -181,7 +186,9 @@ Chapter 6 — Status & Baseline
   element IS in scope (Chapter 6, low weight) — it is distinct from the JS API.
 - Data range: the element set is "the MDN element reference, all categories", weighted toward commonly misused
   elements; not a silent subset. At least 200 questions in v1, grouped into the six chapters above.
-- Languages: v1 English only. DE+EN is a planned later increment (native quiz map-per-language).
+- Languages: German and English (`languages: ["de","en"]`, German first; every learner text a `{de,en}` map). This
+  reverses the earlier "English only" note — the platform requires German (`learner-text-german`); done now with the
+  creator's approval after the listing review. Native quiz map-per-language; German at `/`, English at `/en/`.
 
 ### `<geolocation>` — resolved at the Explore checkpoint
 
@@ -195,7 +202,9 @@ Chapter 6 — Status & Baseline
 
 1. Build-time status generation vs pre-computed: pre-computed and baked into `src/quiz.json` (pipeline allows only
    data + images; `quiz-only-data`). No runtime API.
-2. Multilingual: native to the quiz archetype (map per language, German first). v1 stays English-only; no custom i18n.
+2. Multilingual: native to the quiz archetype (map per language, German first). Implemented as German **and** English
+   (`languages: ["de","en"]`); no custom i18n. (Originally planned English-only for v1; reversed in Commit after the
+   listing review, because the platform rule `learner-text-german` requires German. Creator approved.)
 3. Weighting: no weight/difficulty field exists; emphasis is by question count per topic cluster and contiguous
    grouping.
 
@@ -300,7 +309,8 @@ build (even though `rememberLastResult` is on), so `entry-fitness-matches` holds
       "Ich kann …", and verified primary sources (MDN element reference, web-features/Baseline) under Notes.
 - [x] One line per competency under Notes: how learners get there and which misconception the feedback catches.
 - [x] Scope under Notes: what is in, what is out and why, the data range (MDN element reference, all categories, not
-      a silent subset; ≥200 questions), languages (v1 English).
+      a silent subset; ≥200 questions), languages (German and English; originally noted English-only, reversed in
+      Commit for the platform rule `learner-text-german`).
 - [x] Fetch the entry schema; read each property; filled the Entry draft with known values (url/source/commit
       deferred to Commit).
 - [x] **Checkpoint:** research. Confirmed by the creator with one correction — include `<geolocation>` as an
@@ -408,10 +418,12 @@ END
 ### Content method
 
 Single data file `src/quiz.json` (schema `quiz.v1`), validated by `npx lernapps check`; no code, no runtime API
-(`quiz-only-data`). v1 English-only: `languages` is omitted, every learner text is a plain string (English). Status
+(`quiz-only-data`). German and English: `languages: ["de","en"]` (German first), every learner text a `{de,en}` map. Status
 facts (Baseline widely/newly/limited, experimental, deprecated) are looked up at authoring time from MDN +
 `web-features`/Baseline and baked as plain text into each question's `text`, option `info` and `explanation`; the
-authoring date is named in `sources`. DE+EN is a later increment (native `languages: ["de","en"]` map).
+authoring date is named in `sources`. DE+EN uses the native `languages: ["de","en"]` map (German at `/`, English at
+`/en/`); link URLs stay single strings (English MDN). Added in Commit after the listing review (platform rule
+`learner-text-german`); the English content was translated to German in full, preserving exactly what each question checks.
 
 Six chapters → six contiguous blocks of questions in the `questions` array (no group field; order = grouping).
 Emphasis "frequently misused > breadth > rare/new" is realised purely by **question count per chapter**: the
